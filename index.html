@@ -16,7 +16,7 @@
             background: #f4f4f4;
         }
 
-        div {
+        div.outer-box {
             background: #ffffff;
             padding: 20px 40px;
             border-radius: 10px;
@@ -24,18 +24,27 @@
             text-align: center;
             max-width: 500px;
             width: 100%;
+            height: 300px;  
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         #text {
             font-size: 1.5rem;
             color: #333;
             margin-bottom: 20px;
+            word-wrap: break-word; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
+            height: 100%; 
+            overflow-y: auto; 
         }
 
         #author {
             font-size: 1.2rem;
             color: #555;
-            margin-bottom: 30px;
+            margin-top: 10px; 
         }
 
         #button {
@@ -50,51 +59,51 @@
         }
 
         #button:hover {
-            background:rgb(74, 72, 72);
+            background: rgb(74, 72, 72);
         }
 
     </style>
 </head>
 <body>
-    <div >
-        <div id="text"></div>
-        <div id="author"></div>
+    <div class="outer-box">
+        <div id="text">Loading quote...</div>
+        <div id="author">- Author</div>
         <button id="button">new quote</button>
     </div>
+
     <script>
-       let text= document.getElementById("text")
-       let author = document.getElementById("author")
-       let button = document.getElementById("button")
+       let text = document.getElementById("text");
+       let author = document.getElementById("author");
+       let button = document.getElementById("button");
 
-       let qootesArr = []
-       let index = 0
+       let quotesArr = [];
+       let index = 0;
 
-       button.addEventListener("click",()=>randomIndex())
+       button.addEventListener("click", () => randomIndex());
 
-       function randomIndex(){
-        index = Math.floor(Math.random() * quotesArr.length)
-        console.log(index)
-        getQuotes(index)
-       }
-        
+       async function getQuotes() {
+            let url = "https://jacintodesign.github.io/quotes-api/data/quotes.json";
+            try {
+                let response = await fetch(url);
+                quotesArr = await response.json();
+                console.log(quotesArr);
 
-       async function getQuotes(index){
-            let url="https://jacintodesign.github.io/quotes-api/data/quotes.json";
-        try{
-            let response = await fetch(url)
-            quotesArr = await response.json();
-            console.log(quotesArr)   
+                randomIndex();  
 
-            let object = quotesArr[index]
-            text.textContent=object.text
-            author.textContent=object.author
+            } catch (error) {
+                console.log(error);
+            }
         }
-        catch(error){
-            console.log(error)
-        }
-       }
 
-       getQuotes(index)
+        function randomIndex() {
+            index = Math.floor(Math.random() * quotesArr.length);
+            console.log(index);
+            let object = quotesArr[index];
+            text.textContent = object.text;
+            author.textContent = object.author;
+        }
+
+        getQuotes();
     </script>
 </body>
 </html>
